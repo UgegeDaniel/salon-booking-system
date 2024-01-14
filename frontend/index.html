@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="styles.css" />
+    <link
+      rel="stylesheet"
+      href="https://unicons.iconscout.com/release/v4.0.0/css/line.css"
+    />
+    <title>Salon Booking System | Home</title>
+  </head>
+  <body>
+    <div class="container main-container">
+      <h1>Salon Booking System</h1>
+      <div class="navbar">
+        <div class="navbar-icon" onclick="toggleNav()">&#9776;</div>
+        <nav id="navbar">
+          <a href="index.html">Home</a>
+          <a href="services.html">Services</a>
+          <a href="profile.html">Profile</a>
+          <a href="appointments.html">Appointments</a>
+          <div class="dropdown">
+            <button class="dropbtn">Manage Resources</button>
+            <div class="dropdown-content">
+              <a href="crudService.html">Manage Services</a>
+              <a href="clients.html">Manage Clients</a>
+            </div>
+          </div>
+          <button class="button form-open">Sign Up / Log in</button>
+          <button class="button" id="logout" style="display: none">
+            Logout
+          </button>
+        </nav>
+      </div>
+      <div class="landing-container">
+        <div class="landing">
+          <h2>Welcome to our Salon Booking System</h2>
+          <p>
+            Easily schedule your next salon appointment online. Book your
+            preferred services, choose your stylist, and manage your
+            appointments effortlessly.
+            <button class="button form-open">
+              Sign Up / Log in to get started!
+            </button>
+          </p>
+        </div>
+      </div>
+      <section class="home">
+        <div class="form_container">
+          <i class="uil uil-times form_close"></i>
+          <div class="form login_form">
+            <form action="#">
+              <h2>Login</h2>
+              <div class="input_box">
+                <input type="email" placeholder="Enter your email" required />
+                <i class="uil uil-envelope-alt email"></i>
+              </div>
+              <div class="input_box">
+                <input
+                  type="password"
+                  placeholder="Enter your password"
+                  required
+                />
+                <i class="uil uil-lock password"></i>
+                <i class="uil uil-eye-slash pw_hide"></i>
+              </div>
+              <button class="button">Login Now</button>
+              <div class="login_signup">
+                Don't have an account? <a href="#" id="signup">Signup</a>
+              </div>
+            </form>
+          </div>
+          <div class="form signup_form">
+            <form action="#">
+              <h2 style="margin-top: 200px">Signup</h2>
+              <div class="input_box">
+                <i class="uil uil-user"></i>
+                <input
+                  type="text"
+                  id="firstName"
+                  placeholder="Enter your First Name"
+                  required
+                />
+              </div>
+              <div class="input_box">
+                <i class="uil uil-user"></i>
+                <input
+                  type="text"
+                  id="lastName"
+                  placeholder="Enter your Last Name"
+                  required
+                />
+              </div>
+              <div class="input_box">
+                <i class="uil uil-phone"></i>
+                <input
+                  type="tel"
+                  id="phoneNumber"
+                  placeholder="Enter your Phone Number"
+                  required
+                />
+              </div>
+              <div class="input_box">
+                <input
+                  type="email"
+                  placeholder="Enter your email"
+                  required
+                  id="email"
+                />
+                <i class="uil uil-envelope-alt email"></i>
+              </div>
+              <div class="input_box">
+                <input
+                  type="password"
+                  placeholder="Create password"
+                  required
+                  id="password"
+                />
+                <i class="uil uil-lock password"></i>
+                <i class="uil uil-eye-slash pw_hide"></i>
+              </div>
+              <div class="input_box">
+                <input
+                  type="password"
+                  placeholder="Confirm password"
+                  id="confirmPassword"
+                  required
+                />
+                <i class="uil uil-lock password"></i>
+                <i class="uil uil-eye-slash pw_hide"></i>
+              </div>
+              <div class="input_box">
+                <select name="accountType" required id="accountType">
+                  <option value="" disabled selected>
+                    Select Account Type
+                  </option>
+                  <option value="admin">Admin</option>
+                  <option value="client">Client</option>
+                </select>
+              </div>
+              <button class="button">Signup Now</button>
+
+              <div class="login_signup">
+                Already have an account? <a href="#" id="login">Login</a>
+              </div>
+            </form>
+          </div>
+        </div>
+      </section>
+      <div class="notification" id="notification"></div>
+      <script src="app.js"></script>
+      <script src="auth-ui.js"></script>
+      <script src="api.js"></script>
+      <script src="auth.js"></script>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="styles.css" />
+    <title>Salon Booking System</title>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Salon Booking System</h1>
+      <div class="navbar">
+        <div class="navbar-icon" onclick="toggleNav()">&#9776;</div>
+        <nav id="navbar">
+          <a href="index.html">Home</a>
+          <a href="services.html">Services</a>
+          <a href="profile.html">Profile</a>
+          <a href="appointments.html">Appointments</a>
+          <div class="dropdown" id="manageResourcesDropdown">
+            <button class="dropbtn">Manage Resources</button>
+            <div class="dropdown-content">
+              <a href="crudService.html">Manage Services</a>
+              <a href="clients.html">Manage Clients</a>
+            </div>
+          </div>
+          <button class="button form-open">Sign Up / Log in</button>
+          <button class="button" id="logout" style="display: none">
+            Logout
+          </button>
+        </nav>
+      </div>
+      <!-- Services Page-->
+      <div class="container">
+        <div class="grid-container" id="servicesContainer">
+          <!-- Services will be dynamically added here -->
+        </div>
+
+        <div id="appointmentModal" class="modal">
+          <div class="modal-content">
+            <span class="close" onclick="closeAppointmentModal()">&times;</span>
+            <form id="appointmentForm">
+              <!-- Form fields will be added dynamically using JavaScript -->
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="notification" id="notification"></div>
+    <script src="app.js"></script>
+    <script src="api.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", async function () {
+        try {
+          const services = await fetchData(
+            "http://localhost:5000/product/products"
+          );
+          displayServices(services.products);
+        } catch (error) {
+          console.error("Failed to fetch services:", error.message);
+        }
+      });
+
+      function displayServices(services) {
+        const servicesContainer = document.getElementById("servicesContainer");
+
+        services.forEach((service) => {
+          const serviceCard = document.createElement("div");
+          serviceCard.classList.add("toast");
+          serviceCard.addEventListener("click", () =>
+            openAppointmentModal(service)
+          );
+
+          const serviceName = document.createElement("h2");
+          serviceName.textContent = service.name;
+
+          const serviceDescription = document.createElement("p");
+          serviceDescription.classList.add("service-description");
+          serviceDescription.textContent = service.description;
+
+          const servicePriceGender = document.createElement("p");
+          servicePriceGender.classList.add("price-gender");
+          servicePriceGender.textContent = `$${service.price} - ${service.intended_gender}`;
+
+          const bookAppointmentText = document.createElement("p");
+          bookAppointmentText.classList.add("book-appointment-text");
+          bookAppointmentText.textContent = "Click to book an appointment";
+
+          serviceCard.appendChild(serviceName);
+          serviceCard.appendChild(serviceDescription);
+          serviceCard.appendChild(servicePriceGender);
+          serviceCard.appendChild(bookAppointmentText);
+
+          servicesContainer.appendChild(serviceCard);
+        });
+      }
+
+      // Add these functions to your existing script
+      function openAppointmentModal(service) {
+        const modal = document.getElementById("appointmentModal");
+        modal.style.display = "block";
+
+        // Dynamically create form fields inside the modal
+        const form = document.getElementById("appointmentForm");
+        form.innerHTML = `
+          <label for="clientName">Client Name:</label>
+          <input type="text" id="clientName" value="${getClientNameFromLocalStorage()}" disabled />
+
+          <label for="serviceName">Service Name:</label>
+          <input type="text" id="serviceName" value="${
+            service.name
+          }" disabled />
+
+          <label for="appointmentDate">Appointment Date:</label>
+          <input type="datetime-local" id="appointmentDate" required />
+
+          <label for="comment">Comment:</label>
+          <textarea id="comment"></textarea>
+
+          <input type="hidden" id="serviceId" value="${service.id}" />
+          <button type="submit">Book Appointment</button>
+
+        `;
+      }
+
+      function closeAppointmentModal() {
+        const modal = document.getElementById("appointmentModal");
+        modal.style.display = "none";
+      }
+
+      document
+        .getElementById("appointmentForm")
+        .addEventListener("submit", function (event) {
+          event.preventDefault();
+          submitAppointmentForm();
+        });
+
+      async function submitAppointmentForm() {
+        const serviceName = document.getElementById("serviceName").value;
+        const appointmentDate = new Date(
+          document.getElementById("appointmentDate").value
+        ).toISOString();
+        const comment = document.getElementById("comment").value;
+        const serviceId = document.getElementById("serviceId").value;
+
+        // Make a POST request to create an appointment
+        const appointmentData = {
+          productId: serviceId,
+          appointment_date: appointmentDate,
+          comment,
+        };
+
+        const result = await postData(
+          "http://localhost:5000/appointment/create-appointment",
+          appointmentData
+        );
+        closeAppointmentModal();
+        showNotification(
+          result.success
+            ? "Success: " + result.message
+            : "Error: " + result.message,
+          result.success
+        );
+      }
+
+      function getClientNameFromLocalStorage() {
+        const userCredentials = JSON.parse(
+          localStorage.getItem("user-credentails")
+        );
+        console.log({ userCredentials });
+        return `${userCredentials.user.first_name} ${userCredentials.user.last_name}`;
+      }
+    </script>
+  </body>
+</html>
