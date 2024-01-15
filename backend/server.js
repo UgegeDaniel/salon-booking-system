@@ -16,6 +16,12 @@ app.use("/user", userController);
 app.use("/product", productController);
 app.use("/appointment", appointmentController);
 
+app.get("/", (req, res) => {
+  return res.json({
+    success: true,
+    SBS: "Hello World",
+  });
+});
 app.use(errorHandler);
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
