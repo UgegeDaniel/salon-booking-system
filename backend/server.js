@@ -1,40 +1,30 @@
 import express from "express";
+import cors from "cors";
 import bodyParser from "body-parser";
-import { createUserTable } from "./models/dbInstance.js";
-import {
-  signInUser,
-  signUpAdminUser,
-  signUpRegularUser,
-} from "./userService.js";
+import { config } from "dotenv";
+import userController from "./controllers/userController.js";
+import productController from "./controllers/productController.js";
+import appointmentController from "./controllers/appointmentController.js";
+import errorHandler from "./middlewares/errorHanlerMiddleware.js";
+import dbInit from "./models/dbInit.js";
+
+config();
 const app = express();
-const port = process.env.PORT || 5000;
 app.use(bodyParser.json());
+app.use(cors());
+app.use("/user", userController);
+app.use("/product", productController);
+app.use("/appointment", appointmentController);
 
-//HTTP METHODS : GET, POST, PUT, DELETE
-// Request Object: Holds data from the browser or the request client (eg. postman)
-// Response Object: Holds data given as response to the request
-
-// Base route
 app.get("/", (req, res) => {
-  res.send("Hello World!");
+  return res.json({
+    success: true,
+    SBS: "Hello World",
+  });
 });
-
-// Sign up Route
-app.post("/signup", async (req, res) => {
-  return signUpRegularUser(req, res);
-});
-
-// Sign up Route
-app.post("/admin/signup", async (req, res) => {
-  return signUpAdminUser(req, res);
-});
-
-// Sign in Route
-app.post("/signin", async (req, res) => {
-  return signInUser(req, res);
-});
-
-app.listen(port, () => {
-  createUserTable();
-  console.log(`Example app listening on port ${port}`);
+app.use(errorHandler);
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  dbInit();
+  console.log(`Server is running on port ${PORT}`);
 });
