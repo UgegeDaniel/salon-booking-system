@@ -1,7 +1,7 @@
 const userData = JSON.parse(localStorage.getItem("user-credentails"));
 let headers;
 let accessToken;
-if(userData){
+if (userData) {
   accessToken = userData?.token;
   headers = {
     "Content-Type": "application/json",
@@ -18,8 +18,6 @@ async function fetchData(endpoint) {
       method: "GET",
       headers,
     });
-    console.log({ response });
-
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
@@ -35,12 +33,14 @@ async function fetchData(endpoint) {
 // Function to make a POST request
 async function postData(endpoint, data) {
   const requestUrl = `${baseUrl}${endpoint}`;
+
   try {
     const response = await fetch(requestUrl, {
       method: "POST",
       headers,
       body: JSON.stringify(data),
     });
+    console.log({ response });
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }

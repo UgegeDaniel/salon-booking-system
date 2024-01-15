@@ -13,10 +13,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
   loginForm.addEventListener("submit", async function (event) {
     event.preventDefault();
-    console.log({
-      email: loginEmail.value,
-      password: loginPassword.value,
-    });
     const result = await postData("user/log-in", {
       email: loginEmail.value,
       password: loginPassword.value,
