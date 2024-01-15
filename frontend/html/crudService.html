@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="styles.css" />
+    <title>Salon Booking System | Services</title>
+    <style>
+      .form_container {
+        display: none;
+      }
+
+      table {
+        border-collapse: collapse;
+        width: 100%;
+        margin-top: 20px;
+      }
+
+      table,
+      th,
+      td {
+        border: 1px solid black;
+      }
+
+      th,
+      td {
+        padding: 10px;
+        text-align: left;
+      }
+
+      button {
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Salon Booking System</h1>
+      <div class="navbar">
+        <div class="navbar-icon" onclick="toggleNav()">&#9776;</div>
+        <nav id="navbar">
+          <a href="../index.html">Home</a>
+          <a href="services.html">Services</a>
+          <a href="profile.html">Profile</a>
+          <a href="appointments.html">Appointments</a>
+          <div class="dropdown">
+            <button class="dropbtn">Manage Resources</button>
+            <div class="dropdown-content">
+              <a href="crudService.html">Manage Services</a>
+              <a href="clients.html">Manage Clients</a>
+            </div>
+          </div>
+          <button class="button form-open">Sign Up / Log in</button>
+          <button class="button" id="logout" style="display: none">
+            Logout
+          </button>
+        </nav>
+      </div>
+      <button
+        class="button"
+        id="openAddServiceForm"
+        onclick="openAddServiceForm()"
+      >
+        Add New Service
+      </button>
+
+      <!-- Add a form to add new services -->
+      <div id="addServiceFormContainer">
+        <i class="uil uil-times" onclick="closeAddServiceForm()"></i>
+        <form id="addServiceForm">
+          <!-- Form fields go here -->
+          <div class="input_box">
+            <input
+              type="text"
+              id="serviceName"
+              placeholder="Service Name"
+              required
+            />
+          </div>
+          <div class="input_box">
+            <textarea
+              id="serviceDescription"
+              placeholder="Service Description"
+              required
+            ></textarea>
+          </div>
+          <div class="input_box">
+            <input
+              type="number"
+              id="servicePrice"
+              placeholder="Service Price"
+              required
+            />
+          </div>
+          <div class="input_box">
+            <select id="intendedGender" required>
+              <option value="" disabled selected>Select Intended Gender</option>
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+              <option value="unisex">Unisex</option>
+            </select>
+          </div>
+          <button type="submit" onclick="addService(event)">Add Service</button>
+        </form>
+      </div>
+
+      <!-- Integrated table for listing services -->
+      <table>
+        <thead>
+          <tr>
+            <th>Service Name</th>
+            <th>Description</th>
+            <th>Price</th>
+            <th>Intended Gender</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <p>Fetching Services ...</p>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="notification" id="notification"></div>
+    <script src="../js/app.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/crudService-ui.js"></script>
+    <script src="../js/crudService.js"></script>
+  </body>
+</html>

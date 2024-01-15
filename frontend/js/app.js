@@ -41,7 +41,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
 const logoutButton = document.getElementById("logout");
 logoutButton.addEventListener("click", function () {
-  // Clear the localStorage
   localStorage.clear();
   window.location.href = "index.html";
 });

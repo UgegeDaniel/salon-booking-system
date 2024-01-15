@@ -4,11 +4,13 @@ const headers = {
   "Content-Type": "application/json",
   authorization: `Bearer ${accessToken}`,
 };
+const baseUrl = "https://salon-booking-system-r7jn.onrender.com/";
 
 // Function to make a GET request
-async function fetchData(url) {
+async function fetchData(endpoint) {
+  const requestUrl = `${baseUrl}${endpoint}`;
   try {
-    const response = await fetch(url, {
+    const response = await fetch(requestUrl, {
       method: "GET",
       headers,
     });
@@ -27,10 +29,10 @@ async function fetchData(url) {
 }
 
 // Function to make a POST request
-async function postData(url, data) {
-  console.log({ url, data });
+async function postData(endpoint, data) {
+  const requestUrl = `${baseUrl}${endpoint}`;
   try {
-    const response = await fetch(url, {
+    const response = await fetch(requestUrl, {
       method: "POST",
       headers,
       body: JSON.stringify(data),
@@ -50,9 +52,10 @@ async function postData(url, data) {
 }
 
 // Function to make a PUT request
-async function putData(url, data) {
+async function putData(endpoint, data) {
+  const requestUrl = `${baseUrl}${endpoint}`;
   try {
-    const response = await fetch(url, {
+    const response = await fetch(requestUrl, {
       method: "PUT",
       headers,
       body: JSON.stringify(data),
@@ -71,9 +74,10 @@ async function putData(url, data) {
 }
 
 // Function to make a DELETE request
-async function deleteData(url) {
+async function deleteData(endpoint) {
+  const requestUrl = `${baseUrl}${endpoint}`;
   try {
-    const response = await fetch(url, {
+    const response = await fetch(requestUrl, {
       method: "DELETE",
       headers,
     });
@@ -89,30 +93,3 @@ async function deleteData(url) {
     throw error;
   }
 }
-
-// Example usage:
-// const apiUrl = 'https://api.example.com/data';
-
-// // Fetch data
-// fetchData(apiUrl)
-//     .then(data => console.log('Fetched data:', data))
-//     .catch(error => console.error('Error:', error));
-
-// // Post data
-// const newData = { name: 'John Doe', age: 30 };
-// postData(apiUrl, newData)
-//     .then(result => console.log('Posted data:', result))
-//     .catch(error => console.error('Error:', error));
-
-// // Update data
-// const updatedData = { name: 'Updated Name', age: 31 };
-// const itemIdToUpdate = 123; // Replace with the actual item ID
-// putData(`${apiUrl}/${itemIdToUpdate}`, updatedData)
-//     .then(result => console.log('Updated data:', result))
-//     .catch(error => console.error('Error:', error));
-
-// // Delete data
-// const itemIdToDelete = 456; // Replace with the actual item ID
-// deleteData(`${apiUrl}/${itemIdToDelete}`)
-//     .then(result => console.log('Deleted data:', result))
-//     .catch(error => console.error('Error:', error));
