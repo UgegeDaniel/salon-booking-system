@@ -4,10 +4,9 @@ document.addEventListener("DOMContentLoaded", function () {
   );
   const formOpenButtons = document.getElementsByClassName("form-open");
   const logoutButton = document.getElementById("logout");
-  console.log({ formOpenButtons });
   // Check if user is signed in
   const userCredentials = JSON.parse(localStorage.getItem("user-credentails"));
-  if (userCredentials.user) {
+  if (userCredentials && userCredentials.user) {
     for (let i = 0; i < formOpenButtons.length; i++) {
       formOpenButtons[i].style.display = "none";
     }

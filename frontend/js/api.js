@@ -1,9 +1,13 @@
 const userData = JSON.parse(localStorage.getItem("user-credentails"));
-const accessToken = userData.token;
-const headers = {
-  "Content-Type": "application/json",
-  authorization: `Bearer ${accessToken}`,
-};
+let headers;
+let accessToken;
+if(userData){
+  accessToken = userData?.token;
+  headers = {
+    "Content-Type": "application/json",
+    authorization: `Bearer ${accessToken}`,
+  };
+}
 const baseUrl = "https://salon-booking-system-r7jn.onrender.com/";
 
 // Function to make a GET request
