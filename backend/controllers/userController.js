@@ -9,55 +9,28 @@ import {
   updateUserService,
 } from "../services/userService.js";
 import jwt from "jsonwebtoken";
-import validator from "validator";
 import {
   allowAdminAccessOnly,
   allowAdminAndClientAccess,
 } from "../middlewares/accessControlMiddleware.js";
 import verifyAuthToken from "../middlewares/authmiddleware.js";
+import isValidUserDetails from "../services/validationService.js";
 
+//TYPES OF REQUEST = POST(CREATE), GET(READ), PUT(UPDATE), DELETE(DELETE)
+// POST, GET, PUT AND DELETE ARE CALLED HTTP VERBS
+// CRUD OPERATIONS
+
+// Get instance of the controller
 const userController = Router();
 
-const isValidUserDetails = (email, password) => {
-  const { isStrongPassword, isEmail } = validator;
-  const validEmail = isEmail(email);
-  const validPassword = isStrongPassword(password, {
-    minLength: 8,
-    minLowercase: 1,
-    minUppercase: 1,
-    minNumbers: 1,
-    minSymbols: 1,
-  });
-  if (!validPassword) {
-    return {
-      status: false,
-      message: `Password Should contain the following: 
-        capital letters,
-        small letters,
-        number,
-        special character
-        and must be 8 characters long`,
-    };
-  }
-  if (!validEmail) {
-    return {
-      status: false,
-      message: `please provide a valid email`,
-    };
-  }
-  if (validEmail && validPassword) {
-    return {
-      status: true,
-      message: `valid password and email`,
-    };
-  }
-};
 // Create User
 // General Access
+// /user/sign-up
 userController.post("/sign-up", async (req, res) => {
   try {
     const { first_name, last_name, email, password, phone_number, role } =
       req.body;
+    console.log({ first_name, last_name, email, password, phone_number, role });
     // Validate input
     if (
       !first_name ||
@@ -71,12 +44,7 @@ userController.post("/sign-up", async (req, res) => {
         .status(400)
         .json({ success: false, message: "Incomplete Credentials" });
     }
-    const validatedCredentials = isValidUserDetails(
-      email,
-      password,
-      first_name,
-      last_name
-    );
+    const validatedCredentials = isValidUserDetails(email, password);
     if (!validatedCredentials.status) {
       return res.status(400).json({
         success: false,
@@ -97,9 +65,13 @@ userController.post("/sign-up", async (req, res) => {
       phone_number,
       role
     );
-    const token = jwt.sign({ userId: newUser.id, role }, "your_secret_key", {
-      expiresIn: "3d",
-    });
+    const token = jwt.sign(
+      { userId: newUser.id, role },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "3d",
+      }
+    );
     return res.status(201).json({
       success: true,
       user: newUser,
@@ -114,6 +86,7 @@ userController.post("/sign-up", async (req, res) => {
 
 // Log in User
 // General Access
+// /user/log-in
 userController.post("/log-in", async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -148,7 +121,7 @@ userController.post("/log-in", async (req, res) => {
     if (isPasswordValid) {
       const token = jwt.sign(
         { userId: existingUser.id, role: existingUser.role },
-        "your_secret_key",
+        process.env.JWT_SECRET,
         {
           expiresIn: "3d",
         }
@@ -173,6 +146,7 @@ userController.post("/log-in", async (req, res) => {
 
 // Read All Clients
 // Admin Access
+// /user/clients
 userController.get(
   "/clients",
   verifyAuthToken,
@@ -228,6 +202,7 @@ userController.put(
 
 // Delete User by ID
 // Admin Access
+// users/delete-user/:userId
 userController.delete(
   "/delete-user/:userId",
   verifyAuthToken,

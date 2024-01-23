@@ -10,7 +10,7 @@ const verifyAuthToken = (req, res, next) => {
   }
 
   try {
-    const decodedToken = jwt.verify(token, "your_secret_key");
+    const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
     req.user = {
       userId: decodedToken.userId,
       role: decodedToken.role,

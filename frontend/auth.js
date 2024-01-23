@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", function () {
       email: loginEmail.value,
       password: loginPassword.value,
     });
-    const result = await postData("http://localhost:5000/user/log-in", {
+    const result = await postData("http://localhost:5001/user/log-in", {
       email: loginEmail.value,
       password: loginPassword.value,
     });
@@ -45,7 +45,7 @@ document.addEventListener("DOMContentLoaded", function () {
     event.preventDefault();
     try {
       const response = await postData(
-        "http://localhost:5000/user/sign-up",
+        "http://localhost:5001/user/sign-up",
         userCredentials
       );
       showNotification(

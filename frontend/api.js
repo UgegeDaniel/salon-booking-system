@@ -32,18 +32,14 @@ async function postData(url, data) {
   try {
     const response = await fetch(url, {
       method: "POST",
-      headers,
-      body: JSON.stringify(data),
+      body: data,
     });
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
-
     const result = await response.json();
-    console.log({ result });
     return result;
   } catch (error) {
-    console.log({ error });
     console.error("Error posting data:", error.message);
     throw error;
   }
