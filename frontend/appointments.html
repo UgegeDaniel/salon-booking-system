@@ -3,8 +3,12 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="styles.css" />
-    <title>Appointments</title>
+    <link rel="stylesheet" href="./css/styles.css" />
+    <link
+      rel="stylesheet"
+      href="https://unicons.iconscout.com/release/v4.0.0/css/line.css"
+    />
+    <title>Salon Booking System | Appointments</title>
   </head>
   <body>
     <div class="container">
@@ -52,12 +56,12 @@
       </div>
     </div>
     <div class="notification" id="notification"></div>
-    <script src="app.js"></script>
-    <script src="api.js"></script>
+    <script src="./js/app.js"></script>
+    <script src="./js/api.js"></script>
     <script>
       document.addEventListener("DOMContentLoaded", async function () {
         try {
-          const response = await fetchData(
+          const response = await RequestManager.fetchData(
             "http://localhost:5000/appointment/appointments"
           );
           populateTable(response.appointments);

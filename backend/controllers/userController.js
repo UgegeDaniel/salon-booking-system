@@ -30,7 +30,6 @@ userController.post("/sign-up", async (req, res) => {
   try {
     const { first_name, last_name, email, password, phone_number, role } =
       req.body;
-    console.log({ first_name, last_name, email, password, phone_number, role });
     // Validate input
     if (
       !first_name ||

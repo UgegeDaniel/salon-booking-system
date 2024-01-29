@@ -3,8 +3,12 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="styles.css" />
-    <title>Salon Booking System | Services</title>
+    <link rel="stylesheet" href="./css/styles.css" />
+    <link
+      rel="stylesheet"
+      href="https://unicons.iconscout.com/release/v4.0.0/css/line.css"
+    />
+    <title>Salon Booking System | Manage Resources</title>
     <style>
       .form_container {
         display: none;
@@ -123,13 +127,13 @@
       </table>
     </div>
     <div class="notification" id="notification"></div>
-    <script src="app.js"></script>
-    <script src="api.js"></script>
-    <script src="crudService-ui.js"></script>
+    <script src="./js/app.js"></script>
+    <script src="./js/api.js"></script>
+    <script src="./js/crudService-ui.js"></script>
     <script>
       document.addEventListener("DOMContentLoaded", async function () {
         try {
-          const services = await fetchData(
+          const services = await RequestManager.fetchData(
             "http://localhost:5000/product/products"
           );
           populateTable(services.products);
@@ -153,7 +157,7 @@
           intendedGender: intendedGender,
         };
 
-        const response = await postData(
+        const response = await RequestManager.postData(
           "http://localhost:5000/product/create-product",
           serviceData
         );
@@ -167,7 +171,7 @@
         );
 
         // Refresh the table after adding a new service
-        const services = await fetchData(
+        const services = await RequestManager.fetchData(
           "http://localhost:5000/product/products"
         );
         populateTable(services.products);
@@ -287,7 +291,7 @@
         );
         if (confirmDelete) {
           // Make API request to delete the service
-          const response = await deleteData(
+          const response = await RequestManager.deleteData(
             `http://localhost:5000/product/delete-product/${serviceId}`
           );
           showNotification(
@@ -298,7 +302,7 @@
           );
 
           // Refresh the table after deletion
-          const services = await fetchData(
+          const services = await RequestManager.fetchData(
             "http://localhost:5000/product/products"
           );
           populateTable(services.products);
