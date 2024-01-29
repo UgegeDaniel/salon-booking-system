@@ -1,9 +1,11 @@
 const userData = JSON.parse(localStorage.getItem("user-credentails"));
 const accessToken = userData ? userData.token : null;
 
+const baseurl = "https://salon-booking-system-r7jn.onrender.com/"
 // Function to make a GET request
 var RequestManager = {
-  fetchData: async function (url) {
+  fetchData: async function (endpoint) {
+    const url = baseurl + endpoint
     try {
       const response = await fetch(url, {
         method: "GET",
@@ -26,8 +28,8 @@ var RequestManager = {
   },
 
   // Function to make a POST request
-  postData: async function (url, data) {
-    console.error({ url, data });
+  postData: async function (endpoint, data) {
+    const url = baseurl + endpoint
     try {
       const response = await fetch(url, {
         method: "POST",
@@ -49,7 +51,8 @@ var RequestManager = {
   },
 
   // Function to make a PUT request
-  putData: async function (url, data) {
+  putData: async function (endpoint, data) {
+    const url = baseurl + endpoint
     try {
       const response = await fetch(url, {
         method: "PUT",
@@ -73,7 +76,9 @@ var RequestManager = {
   },
 
   // Function to make a DELETE request
-  deleteData: async function (url) {
+  deleteData: async function (endpoint) {
+    const url = baseurl + endpoint
+
     try {
       const response = await fetch(url, {
         method: "DELETE",
