@@ -3,36 +3,40 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="./css/styles.css" />
     <link
       rel="stylesheet"
       href="https://unicons.iconscout.com/release/v4.0.0/css/line.css"
     />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+    <link rel="stylesheet" href="./css/styles.css" />
     <title>Salon Booking System | Clients</title>
   </head>
   <body>
     <div class="container">
       <h1>Salon Booking System</h1>
-      <div class="navbar">
-        <div class="navbar-icon" onclick="toggleNav()">&#9776;</div>
-        <nav id="navbar">
+      <div class="flex">
+        <div class="topnav" id="myTopnav">
           <a href="index.html">Home</a>
           <a href="services.html">Services</a>
           <a href="profile.html">Profile</a>
           <a href="appointments.html">Appointments</a>
-          <div class="dropdown">
-            <button class="dropbtn">Manage Resources</button>
-            <div class="dropdown-content">
-              <a href="crudService.html">Manage Services</a>
-              <a href="clients.html">Manage Clients</a>
-            </div>
-          </div>
-          <button class="button form-open">Sign Up / Log in</button>
-          <button class="button" id="logout" style="display: none">
-            Logout
-          </button>
-        </nav>
+        </div>
+        <a href="javascript:void(0);" class="icon" onclick="myFunction()">
+          <i class="fa fa-bars"></i>
+        </a>
       </div>
+      <div id="manageResourcesDropdown" lass="dropdown">
+        <button class="dropbtn">Manage Resources</button>
+        <div class="dropdown-content">
+          <a href="crudService.html">Manage Services</a>
+          <a href="clients.html">Manage Clients</a>
+        </div>
+      </div>
+      <button class="button form-open">Sign Up / Log in</button>
+      <button class="button" id="logout" style="display: none">Logout</button>
       <!-- Landing Page-->
       <div class="container">
         <!-- Add a table to list clients -->

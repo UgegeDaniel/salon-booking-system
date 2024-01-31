@@ -2,43 +2,6 @@ const getDocumentElement = (selector) => document.querySelector(selector);
 document.addEventListener("DOMContentLoaded", function () {
   const loginForm = document.querySelector(".login_form form");
   const signupForm = document.querySelector(".signup_form form");
-  const loaderOverlay = document.querySelector("#loadingOverlay");
-  const notificationElement = document.querySelector("#notification");
-
-  function displayLoader(loading) {
-    loading
-      ? (loaderOverlay.style.display = "flex")
-      : (loaderOverlay.style.display = "none");
-  }
-
-  function displayNotification(message, type) {
-    notificationElement.innerText = message;
-    if (type === "error") {
-      notificationElement.style.backgroundColor = "#f44336";
-    } else {
-      notificationElement.style.backgroundColor = "#4caf50";
-    }
-    notificationElement.style.display = "block";
-    setTimeout(() => {
-      notificationElement.style.display = "none";
-    }, 3000);
-    return;
-  }
-
-  function navigateTo(route) {
-    window.location.href = route;
-  }
-
-  function debounce(func, timeout = 300) {
-    let timer;
-    return (...args) => {
-      clearTimeout(timer);
-      timer = setTimeout(() => {
-        func.apply(this, args);
-      }, timeout);
-    };
-  }
-  const debouncedNavigateTo = debounce(navigateTo, 4000);
 
   function saveToLocalStorage(key, data) {
     try {
@@ -51,21 +14,27 @@ document.addEventListener("DOMContentLoaded", function () {
   }
   loginForm.addEventListener("submit", async function (event) {
     event.preventDefault();
+
+    //Make Post request
     const { response, error } = await postRequest(
       "user/log-in",
       {
+        // Get input values and assign to request body
         email: getDocumentElement("input[type=email]").value,
         password: getDocumentElement("input[type=password]").value,
       },
       displayLoader
     );
+
+    //Save to localstorage
     if (!error && response.success) {
       saveToLocalStorage("user-credentails", response);
     }
+
+    //Show notification
     const msgStyle = !response?.success || error ? "error" : "success";
     const msg = error || response.message;
     displayNotification(msg, msgStyle);
-
     if (response.success) {
       debouncedNavigateTo("profile.html");
     }
@@ -73,6 +42,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   signupForm.addEventListener("submit", async function (event) {
     event.preventDefault();
+
     // Get input values and assign to request body
     const userCredentials = {
       first_name: getDocumentElement("#firstName").value,
@@ -89,14 +59,20 @@ document.addEventListener("DOMContentLoaded", function () {
     if (userPassword !== userConfirmPassword) {
       displayNotification("Passwords do not Match", "error");
     }
+
+    //Make Post request
     const { response, error } = await postRequest(
       "user/sign-up",
       userCredentials,
       displayLoader
     );
+
+    //Save to localstorage
     if (!error && response.success) {
       saveToLocalStorage("user-credentails", response);
     }
+
+    //Show notification
     const msgStyle = !response?.success || error ? "error" : "success";
     const msg = error || response.message;
     displayNotification(msg, msgStyle);

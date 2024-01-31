@@ -29,13 +29,19 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 document.addEventListener("DOMContentLoaded", function () {
-  const links = document.querySelectorAll("nav a");
+  const links = document.querySelectorAll(".topnav a");
+  let activeLink;
   links.forEach((link) => {
     if (link.href === window.location.href) {
-      link.style.backgroundColor = "#ddd";
-      link.style.color = "black";
+      activeLink = link;
+      activeLink.classList.add("active");
     }
   });
+  if (activeLink && Number(window.screen.availWidth) <= 800) {
+    activeLink.parentNode.removeChild(activeLink);
+    const topnav = document.querySelector(".topnav");
+    topnav.insertBefore(activeLink, topnav.firstChild);
+  }
 });
 
 const logoutButton = document.getElementById("logout");
@@ -45,17 +51,11 @@ logoutButton.addEventListener("click", function () {
   window.location.href = "index.html";
 });
 
-const notificationBar = document.getElementById("notification");
-function showNotification(message, isSuccess) {
-  console.log({
-    status: isSuccess,
-    message,
-  });
-  notificationBar.textContent = message;
-  notificationBar.className =
-    "notification " + (isSuccess ? "success" : "error");
-  notificationBar.style.display = "block";
-  setTimeout(() => {
-    notificationBar.style.display = "none";
-  }, 5000);
+function myFunction() {
+  var topnav = document.getElementById("myTopnav");
+  if (topnav.className === "topnav") {
+    topnav.className += " responsive";
+  } else {
+    topnav.className = "topnav";
+  }
 }
