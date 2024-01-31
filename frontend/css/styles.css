@@ -1,5 +1,6 @@
 @import url("form.css"); /* Using a url */
 @import url("notification.css"); /* Using a url */
+@import url("loader.css"); /* Using a url */
 
 body {
   font-family: "Arial", sans-serif;

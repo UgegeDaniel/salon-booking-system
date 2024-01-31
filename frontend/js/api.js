@@ -1,102 +1,66 @@
-const userData = JSON.parse(localStorage.getItem("user-credentails"));
+const userData = JSON.parse(localStorage.getItem("user-credentials"));
 const accessToken = userData ? userData.token : null;
+const baseUrl = "http://localhost:5001/";
 
-const baseurl = "https://salon-booking-system-r7jn.onrender.com/"
-// Function to make a GET request
-var RequestManager = {
-  fetchData: async function (endpoint) {
-    const url = baseurl + endpoint
-    try {
-      const response = await fetch(url, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          authorization: `Bearer ${accessToken}`,
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-
-      const data = await response.json();
-      return data;
-    } catch (error) {
-      console.error("Error fetching data:", error.message);
-      throw error;
+async function handleRequest(url, options, loaderCb) {
+  const apiUrl = baseUrl + url;
+  let loading = true;
+  const headers = {
+    Authorization: accessToken ? `Bearer ${accessToken}` : undefined,
+    ...options.headers,
+  };
+  try {
+    loaderCb(true);
+    const response = await fetch(apiUrl, { ...options, headers });
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.message || "Failed to fetch data");
     }
-  },
+        loaderCb(false);
+    return { response: data, loading: false, error: null };
+  } catch (error) {
+    loaderCb(false);
+    return { response: null, loading: false, error: error.message };
+  }
+}
 
-  // Function to make a POST request
-  postData: async function (endpoint, data) {
-    const url = baseurl + endpoint
-    try {
-      const response = await fetch(url, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          authorization: `Bearer ${accessToken}`,
-        },
-        body: JSON.stringify(data),
-      });
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-      const result = await response.json();
-      return result;
-    } catch (error) {
-      console.error("Error posting data:", error.message);
-      throw error;
-    }
-  },
 
-  // Function to make a PUT request
-  putData: async function (endpoint, data) {
-    const url = baseurl + endpoint
-    try {
-      const response = await fetch(url, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          authorization: `Bearer ${accessToken}`,
-        },
-        body: JSON.stringify(data),
-      });
+// Fetch all Resources
+async function fetchResources(endpoint) {
+  const options = {
+    method: "GET",
+  };
+  return await handleRequest(endpoint, options);
+}
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
+// Create a new Resources
+async function postRequest(endpoint, newResource, loaderCb) {
+  const options = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(newResource),
+  };
+  return await handleRequest(endpoint, options, loaderCb);
+}
 
-      const result = await response.json();
-      return result;
-    } catch (error) {
-      console.error("Error updating data:", error.message);
-      throw error;
-    }
-  },
+// Update an existing Resources
+async function updateRequest(endpoint, resource, loaderCb) {
+  const options = {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(resource),
+  };
+  return await handleRequest(endpoint, options, loaderCb);
+}
 
-  // Function to make a DELETE request
-  deleteData: async function (endpoint) {
-    const url = baseurl + endpoint
-
-    try {
-      const response = await fetch(url, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-          authorization: `Bearer ${accessToken}`,
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-
-      const result = await response.json();
-      return result;
-    } catch (error) {
-      console.error("Error deleting data:", error.message);
-      throw error;
-    }
-  },
-};
+// Delete a Resources by ID
+async function deleteRequest(endpoint, loaderCb) {
+  const options = {
+    method: "DELETE",
+  };
+  return await handleRequest(endpoint, options, loaderCb);
+}

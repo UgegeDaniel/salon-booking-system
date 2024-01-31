@@ -5,12 +5,13 @@
   font-weight: bold;
   color: #fff;
   position: fixed;
-  top: 10%; /* Center vertically */
+  top: 20%; /* Center vertically */
   left: 50%; /* Center horizontally */
   transform: translate(-50%, -50%); /* Center the element precisely */
   width: 80%; /* Adjust the width as needed */
   max-width: 300px; /* Set a maximum width if desired */
   z-index: 1000;
+  border-radius: 5px;
 }
 .success {
   background-color: #4caf50; /* Green */
