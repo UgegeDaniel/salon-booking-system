@@ -34,4 +34,4 @@ function debounce(func, timeout = 300) {
     }, timeout);
   };
 }
-const debouncedNavigateTo = debounce(navigateTo, 4000);
+const debouncedNavigateTo = debounce(navigateTo, 3000);
