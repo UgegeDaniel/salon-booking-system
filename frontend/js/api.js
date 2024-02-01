@@ -1,7 +1,7 @@
 const userData = JSON.parse(localStorage.getItem("user-credentails"));
 const accessToken = userData ? userData.token : null;
 // const baseUrl = "http://localhost:5001/";
-const baseUrl = "https://salon-booking-system-r7jn.onrender.com/"
+const baseUrl = "https://salon-booking-system-r7jn.onrender.com/";
 
 async function handleRequest(url, options, loaderCb) {
   const apiUrl = baseUrl + url;
@@ -25,11 +25,11 @@ async function handleRequest(url, options, loaderCb) {
 }
 
 // Fetch all Resources
-async function fetchResources(endpoint) {
+async function fetchResources(endpoint, loaderCb) {
   const options = {
     method: "GET",
   };
-  return await handleRequest(endpoint, options);
+  return await handleRequest(endpoint, options, loaderCb);
 }
 
 // Create a new Resources

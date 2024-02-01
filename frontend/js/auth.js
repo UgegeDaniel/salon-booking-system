@@ -46,7 +46,6 @@ document.addEventListener("DOMContentLoaded", function () {
     //Confirm Password Validation
     const userPassword = signupForm.password.value;
     const userConfirmPassword = getDocumentElement("#confirmPassword").value;
-    console.log({ userPassword, userConfirmPassword });
     if (userPassword !== userConfirmPassword) {
       displayNotification("Passwords do not Match", "error");
       return;

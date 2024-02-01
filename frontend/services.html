@@ -17,6 +17,10 @@
   <body>
     <div class="container">
       <h1>Salon Booking System</h1>
+      <div class="loading-overlay" id="loadingOverlay" style="display: none">
+        <div class="loader"></div>
+        <!-- <div class="loading-text">Loading...</div> -->
+      </div>
       <div class="flex">
         <div class="topnav" id="myTopnav">
           <a href="index.html">Home</a>
@@ -55,17 +59,17 @@
     </div>
     <div class="notification" id="notification"></div>
     <script src="./js/app.js"></script>
+    <script src="./js/utils.js"></script>
     <script src="./js/api.js"></script>
     <script>
       document.addEventListener("DOMContentLoaded", async function () {
-        try {
-          const services = await RequestManager.fetchData(
-            "http://localhost:5000/product/products"
-          );
-          displayServices(services.products);
-        } catch (error) {
-          console.error("Failed to fetch services:", error.message);
-        }
+        const {
+          response: { products },
+          error,
+          loading,
+        } = await fetchResources("product/products", displayLoader);
+        console.log({ error, loading, products });
+        displayServices(products);
       });
 
       function displayServices(services) {
@@ -157,17 +161,12 @@
           comment,
         };
 
-        const result = await postData(
-          "http://localhost:5000/appointment/create-appointment",
-          appointmentData
+        const result = await postRequest(
+          "appointment/create-appointment",
+          appointmentData,
+          displayLoader
         );
         closeAppointmentModal();
-        showNotification(
-          result.success
-            ? "Success: " + result.message
-            : "Error: " + result.message,
-          result.success
-        );
       }
 
       function getClientNameFromLocalStorage() {
