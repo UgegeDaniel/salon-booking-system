@@ -1,10 +1,9 @@
-const userData = JSON.parse(localStorage.getItem("user-credentials"));
+const userData = JSON.parse(localStorage.getItem("user-credentails"));
 const accessToken = userData ? userData.token : null;
 const baseUrl = "http://localhost:5001/";
 
 async function handleRequest(url, options, loaderCb) {
   const apiUrl = baseUrl + url;
-  let loading = true;
   const headers = {
     Authorization: accessToken ? `Bearer ${accessToken}` : undefined,
     ...options.headers,
@@ -16,14 +15,13 @@ async function handleRequest(url, options, loaderCb) {
     if (!response.ok) {
       throw new Error(data.message || "Failed to fetch data");
     }
-        loaderCb(false);
+    loaderCb(false);
     return { response: data, loading: false, error: null };
   } catch (error) {
     loaderCb(false);
     return { response: null, loading: false, error: error.message };
   }
 }
-
 
 // Fetch all Resources
 async function fetchResources(endpoint) {

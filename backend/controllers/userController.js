@@ -185,10 +185,18 @@ userController.put(
         last_name,
         phoneNumber
       );
+      const token = jwt.sign(
+        { userId: updatedUser.id, role: updatedUser.role },
+        process.env.JWT_SECRET,
+        {
+          expiresIn: "3d",
+        }
+      );
       res.status(200).json({
         success: true,
         user: updatedUser,
         message: "User updated successfully.",
+        token,
       });
     } catch (error) {
       console.error(error.message);

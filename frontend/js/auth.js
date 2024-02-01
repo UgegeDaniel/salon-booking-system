@@ -3,23 +3,8 @@ document.addEventListener("DOMContentLoaded", function () {
   const loginForm = document.querySelector(".login_form form");
   const signupForm = document.querySelector(".signup_form form");
 
-  function saveToLocalStorage(key, data) {
-    try {
-      const jsonData = JSON.stringify(data);
-      localStorage.setItem(key, jsonData);
-      console.log(`Data saved to localStorage with key: ${key}`);
-    } catch (error) {
-      console.error("Error saving data to localStorage:", error);
-    }
-  }
-
   loginForm.addEventListener("submit", async function (event) {
     event.preventDefault();
-    console.log({
-      // Get input values and assign to request body
-      email: getDocumentElement("#email").value,
-      password: getDocumentElement("#password").value,
-    });
     //Make Post request
     const { response, error } = await postRequest(
       "user/log-in",

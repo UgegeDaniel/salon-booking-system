@@ -35,3 +35,13 @@ function debounce(func, timeout = 300) {
   };
 }
 const debouncedNavigateTo = debounce(navigateTo, 3000);
+
+function saveToLocalStorage(key, data) {
+  try {
+    const jsonData = JSON.stringify(data);
+    localStorage.setItem(key, jsonData);
+    console.log(`Data saved to localStorage with key: ${key}`);
+  } catch (error) {
+    console.error("Error saving data to localStorage:", error);
+  }
+}

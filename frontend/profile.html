@@ -1,65 +1,128 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link
-      rel="stylesheet"
-      href="https://unicons.iconscout.com/release/v4.0.0/css/line.css"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
-    />
-    <link rel="stylesheet" href="./css/styles.css" />
-    <title>Salon Booking System | Profile</title>
-  </head>
 
-  <body>
-    <div class="container">
-      <h1>Salon Booking System</h1>
-      <div class="flex">
-        <div class="topnav" id="myTopnav">
-          <a href="index.html">Home</a>
-          <a href="services.html">Services</a>
-          <a href="profile.html">Profile</a>
-          <a href="appointments.html">Appointments</a>
-        </div>
-        <a href="javascript:void(0);" class="icon" onclick="myFunction()">
-          <i class="fa fa-bars"></i>
-        </a>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+  <link rel="stylesheet" href="./css/styles.css" />
+  <title>Salon Booking System | Profile</title>
+</head>
+
+<body>
+  <div class="container">
+    <h1>Salon Booking System</h1>
+    <div class="loading-overlay" id="loadingOverlay" style="display: none">
+      <div class="loader"></div>
+      <!-- <div class="loading-text">Loading...</div> -->
+    </div>
+    <div class="flex">
+      <div class="topnav" id="myTopnav">
+        <a href="index.html">Home</a>
+        <a href="services.html">Services</a>
+        <a href="profile.html">Profile</a>
+        <a href="appointments.html">Appointments</a>
       </div>
-      <div id="manageResourcesDropdown" lass="dropdown">
-        <button class="dropbtn">Manage Resources</button>
-        <div class="dropdown-content">
-          <a href="crudService.html">Manage Services</a>
-          <a href="clients.html">Manage Clients</a>
-        </div>
-      </div>
-      <button class="button form-open">Sign Up / Log in</button>
-      <button class="button" id="logout" style="display: none">Logout</button>
-      <!-- Landing Page-->
-      <div class="container">
-        <div class="profile-details" id="profileDetails"></div>
+      <a href="javascript:void(0);" class="icon" onclick="myFunction()">
+        <i class="fa fa-bars"></i>
+      </a>
+    </div>
+    <div id="manageResourcesDropdown" lass="dropdown">
+      <button class="dropbtn">Manage Resources</button>
+      <div class="dropdown-content">
+        <a href="crudService.html">Manage Services</a>
+        <a href="clients.html">Manage Clients</a>
       </div>
     </div>
-    <script src="./js/app.js"></script>
-    <script>
-      document.addEventListener("DOMContentLoaded", function () {
-        const userData = JSON.parse(localStorage.getItem("user-credentails"));
-        const profileDetails = document.getElementById("profileDetails");
-        if (userData) {
-          const profileHTML = `
-            <p><strong>Name:</strong> ${userData.user.first_name} ${userData.user.last_name}</p>
-            <p><strong>Email:</strong> ${userData.user.email}</p>
-            <p><strong>Phone Number:</strong> ${userData.user.phone_number}<button>✏</button></p>
-            <!-- Add more details as needed -->
-          `;
-          profileDetails.innerHTML = profileHTML;
-        } else {
-          profileDetails.innerHTML = "<p>No user data found.</p>";
-        }
-      });
-    </script>
-  </body>
+    <button class="button form-open">Sign Up / Log in</button>
+    <button class="button" id="logout" style="display: none">Logout</button>
+    <!-- Landing Page-->
+    <div class="container">
+      <div class="profile-details" id="profileDetails"></div>
+    </div>
+  </div>
+  <div class="notification" id="notification"></div>
+  <script src="./js/api.js"></script>
+  <script src="./js/utils.js"></script>
+  <script src="./js/app.js"></script>
+  <script>
+    const userDataProfile = () => JSON.parse(localStorage.getItem("user-credentails")).user;
+    function updatePhoneNumberInput() {
+      displayProfileDetails(true);
+      document.querySelector("input").focus();
+      document.querySelector(".fa-pencil").remove();
+      const node = document.createElement("i");
+      node.classList.add("fa");
+      node.classList.add("fa-check");
+      node.setAttribute("onclick", "submitEdit()");
+      document.querySelector(".editable-field-container").appendChild(node);
+    }
+
+    async function submitEdit() {
+      document.querySelector(".fa-check").remove();
+      //Make Post request
+      const { response, error } = await updateRequest(
+        "user/update-user",
+        {
+          first_name: document.querySelector(".userFirstname").value,
+          last_name: document.querySelector(".userLastname").value,
+          phoneNumber: document.querySelector(".phoneNumber").value,
+        },
+        displayLoader
+      );
+      console.log(response);
+      //Save to localstorage
+      if (!error && response.success) {
+        saveToLocalStorage("user-credentails", response);
+      }
+      //Show notification
+      const msgStyle = !response?.success || error ? "error" : "success";
+      const msg = error || response.message;
+      displayNotification(msg, msgStyle);
+
+      const node = document.createElement("i");
+      node.classList.add("fa");
+      node.classList.add("fa-pencil");
+      node.setAttribute("onclick", "updatePhoneNumberInput()");
+      document.querySelector(".editable-field-container").appendChild(node);
+      displayProfileDetails(false);
+    }
+
+    function displayProfileDetails(editing) {
+      const profileHTML = `
+      <div class="profile-container">
+        <div class="editable-field-container">
+        <strong>FIrst Name Number:</strong>
+        <input class="editable-field userFirstname" type="text" value="${userDataProfile().first_name
+        }" ${editing ? "" : "readonly"}/>
+        </div>
+        <div class="editable-field-container">
+        <strong>Last Name:</strong>
+        <input class="editable-field userLastname" type="text" value="${userDataProfile().last_name
+        }" ${editing ? "" : "readonly"}/>
+        </div>
+      <p class="editable-field-container"><strong style="margin-right: 20px">Email:</strong> ${userDataProfile().email}</p>
+      <div class="editable-field-container">
+        <strong>Phone Number:</strong>
+        <input class="editable-field phoneNumber" type="text" value="${userDataProfile().phone_number
+        }" ${editing ? "" : "readonly"}/>
+        <i class="fa fa-pencil" onclick="updatePhoneNumberInput()"></i> 
+        </div>
+        </div>
+        `;
+      profileDetails.innerHTML = profileHTML;
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+      const profileDetails = document.getElementById("profileDetails");
+      if (userDataProfile()) {
+        displayProfileDetails(false);
+      } else {
+        profileDetails.innerHTML = "<p>No user data found.</p>";
+      }
+    });
+  </script>
+</body>
+
 </html>
