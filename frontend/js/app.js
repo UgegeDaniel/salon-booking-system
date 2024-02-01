@@ -42,6 +42,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const topnav = document.querySelector(".topnav");
     topnav.insertBefore(activeLink, topnav.firstChild);
   }
+  console.log(process.env.PORT)
 });
 
 const logoutButton = document.getElementById("logout");
