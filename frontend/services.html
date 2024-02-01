@@ -63,13 +63,15 @@
     <script src="./js/api.js"></script>
     <script>
       document.addEventListener("DOMContentLoaded", async function () {
-        const {
-          response: { products },
-          error,
-          loading,
-        } = await fetchResources("product/products", displayLoader);
-        console.log({ error, loading, products });
-        displayServices(products);
+        const { response, error, loading } = await fetchResources(
+          "product/products",
+          displayLoader
+        );
+        //Show notification
+        const msgStyle = !response?.success || error ? "error" : "success";
+        const msg = error || response.message;
+        displayNotification(msg, msgStyle);
+        displayServices(response.products);
       });
 
       function displayServices(services) {
@@ -161,11 +163,15 @@
           comment,
         };
 
-        const result = await postRequest(
+        const { response, error, loading } = await postRequest(
           "appointment/create-appointment",
           appointmentData,
           displayLoader
         );
+        //Show notification
+        const msgStyle = !response?.success || error ? "error" : "success";
+        const msg = error || response.message;
+        displayNotification(msg, msgStyle);
         closeAppointmentModal();
       }
 
@@ -173,7 +179,6 @@
         const userCredentials = JSON.parse(
           localStorage.getItem("user-credentails")
         );
-        console.log({ userCredentials });
         return `${userCredentials.user.first_name} ${userCredentials.user.last_name}`;
       }
     </script>

@@ -59,7 +59,11 @@ router.get(
   async (req, res) => {
     try {
       const products = await getAllProductsService();
-      return res.status(200).json({ success: true, products });
+      return res.status(200).json({
+        success: true,
+        products,
+        message: "Services Fetched Successfully.",
+      });
     } catch (error) {
       console.error(error.message);
       return res

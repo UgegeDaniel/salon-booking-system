@@ -62,7 +62,13 @@ router.get(
       const clientId = req.user.userId;
       const appointments = await getAllAppointmentsForClientService(clientId);
       console.log({ appointments });
-      res.status(200).json({ appointments });
+      res
+        .status(200)
+        .json({
+          success: true,
+          appointments,
+          message: "Appointments fetched successfully.",
+        });
     } catch (error) {
       console.error(error.message);
       res.status(500).json({ message: "Internal Server Error" });

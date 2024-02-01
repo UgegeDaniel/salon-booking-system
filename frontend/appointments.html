@@ -17,6 +17,10 @@
   <body>
     <div class="container">
       <h1>Salon Booking System</h1>
+      <div class="loading-overlay" id="loadingOverlay" style="display: none">
+        <div class="loader"></div>
+        <!-- <div class="loading-text">Loading...</div> -->
+      </div>
       <div class="flex">
         <div class="topnav" id="myTopnav">
           <a href="index.html">Home</a>
@@ -52,26 +56,26 @@
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <p>Fetching Appointments ...</p>
-            </tr>
+            <tr></tr>
           </tbody>
         </table>
       </div>
     </div>
     <div class="notification" id="notification"></div>
     <script src="./js/app.js"></script>
+    <script src="./js/utils.js"></script>
     <script src="./js/api.js"></script>
     <script>
       document.addEventListener("DOMContentLoaded", async function () {
-        try {
-          const response = await RequestManager.fetchData(
-            "http://localhost:5000/appointment/appointments"
-          );
-          populateTable(response.appointments);
-        } catch (error) {
-          console.error("Failed to fetch appointments:", error.message);
-        }
+        const { response, error, loading } = await fetchResources(
+          "appointment/appointments",
+          displayLoader
+        );
+        //Show notification
+        const msgStyle = !response?.success || error ? "error" : "success";
+        const msg = error || response.message;
+        displayNotification(msg, msgStyle);
+        populateTable(response.appointments);
       });
 
       async function populateTable(appointments) {
@@ -81,7 +85,6 @@
           (a, b) => new Date(b.created_at) - new Date(a.created_at)
         );
         appointments.forEach((appointment) => {
-          console.log({ appointment });
           const row = tableBody.insertRow();
           row.innerHTML = `
             <td class="editable">
@@ -127,7 +130,6 @@
       }
 
       function editAppointment(appointmentId) {
-        console.log({ appointmentId });
         const tableBody = document.querySelector("table tbody");
         const rows = tableBody.getElementsByTagName("tr");
 
@@ -209,6 +211,18 @@
             }
           }
         }
+        const { response, error, loading } = await updateRequest(
+          `/appointment/update-appointment/:${appointmentId}`,
+          { productId, appointment_date, comment },
+          displayLoader
+        );
+        console.log({ response, error, loading });
+
+        //Show notification
+        // const msgStyle = !response?.success || error ? "error" : "success";
+        // const msg = error || response.message;
+        // displayNotification(msg, msgStyle);
+        // populateTable(response.appointments);
       }
 
       async function deleteAppointment(appointmentId) {
@@ -217,21 +231,25 @@
         );
         if (confirmDelete) {
           // Make API request to delete the Appointment
-          const response = await deleteData(
-            `http://localhost:5000/appointment/delete-appointment/${appointmentId}`
+          const {
+            response: deleteResponse,
+            error: deleteError,
+            loading: deleteLoading,
+          } = await deleteRequest(
+            `appointment/delete-appointment/${appointmentId}`,
+            displayLoader
           );
-          showNotification(
-            response.success
-              ? "Success: " + response.message
-              : "Error: " + response.message,
-            response.success
-          );
-
-          // Refresh the table after deletion
-          const appointmentsResponse = await fetchData(
-            "http://localhost:5000/appointment/appointment"
-          );
-          populateTable(appointmentsResponse.appointments);
+          const {
+            response: fetchResponse,
+            error: fetchError,
+            loading: fetchLoading,
+          } = await fetchResources("appointment/appointments", displayLoader);
+          //Show notification
+          const msgStyle =
+            !deleteResponse?.success || deleteError ? "error" : "success";
+          const msg = deleteError || deleteResponse.message;
+          displayNotification(msg, msgStyle);
+          populateTable(fetchResponse.appointments);
         }
       }
     </script>
