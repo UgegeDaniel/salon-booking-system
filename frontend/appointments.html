@@ -41,24 +41,11 @@
       </div>
       <button class="button form-open">Sign Up / Log in</button>
       <button class="button" id="logout" style="display: none">Logout</button>
-      <!-- Landing Page-->
       <div class="container">
-        <!-- Add a table to list appointments -->
-        <table>
-          <thead>
-            <tr>
-              <th>Client Name</th>
-              <th>Client Phone Number</th>
-              <th>Service Name</th>
-              <th>Service Price</th>
-              <th>Appointment Date</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr></tr>
-          </tbody>
-        </table>
+        <div id="myModal" class="modal">
+          <div class="modal-content"></div>
+        </div>
+        <div class="accordion"></div>
       </div>
     </div>
     <div class="notification" id="notification"></div>
@@ -77,87 +64,83 @@
         displayNotification(msg, msgStyle);
         populateTable(response.appointments);
       });
-
       async function populateTable(appointments) {
-        const tableBody = document.querySelector("table tbody");
-        tableBody.innerHTML = "";
+        const accordion = document.querySelector(".accordion");
         appointments.sort(
           (a, b) => new Date(b.created_at) - new Date(a.created_at)
         );
+
+        let htmlContent = ""; // Initialize an empty string to hold the HTML content
+
         appointments.forEach((appointment) => {
-          const row = tableBody.insertRow();
-          row.innerHTML = `
-            <td class="editable">
-              <div>${appointment.first_name} ${appointment.last_name}</div>
-            </td>
-            <td class="editable">
-              <div>${appointment.phone_number}</div>
-            </td>
-            <td class="editable">
-              <div>${appointment.service_name}</div>
-            </td>
-            <td class="editable">
-              <div>${appointment.service_price}</div>
-            </td>
-            <td class="editable">
-              <input disabled type="datetime-local" class="editField" value="${formatDateTimeForInput(
-                appointment.appointment_date
-              )}" data-appointment-id="${appointment.appointment_id}"/>
-            </td>
-            <td>
-              <span
-                class="edit-icon"
-                onclick="editAppointment(${appointment.appointment_id})"
-                data-appointment-id="${appointment.appointment_id}"
-                >✏️</span
-              >
-              <span
-                class="delete-icon"
-                onclick="deleteAppointment(${appointment.appointment_id})"
-                >🗑️</span
-              >
-              <span
-                class="save-icon"
-                style="display: none"
-                onclick="saveUpdatedAppointment(${appointment.appointment_id})"
-                >📄</span
-              >
-            </td>
-        `;
-          row.querySelector(".editable input.editField").dataset.originalValue =
-            appointment.appointment_date;
+          htmlContent += `
+            <div class="accordion-item">
+              <div class="accordion-title flex bg-light">
+                <strong>${appointment.service_name}</strong>
+                <input disabled type="datetime-local" class="editField" value="${formatDateTimeForInput(
+                  appointment.appointment_date
+                )}"/>
+                <span class="edit-icon" onclick="editAppointment(${appointment})" data-appointment-id="${appointment}">✏️</span>
+                <span class="delete-icon" onclick="deleteAppointment(${
+                  appointment.appointment_id
+                })">🗑️</span>
+              </div>
+              <div class="accordion-content">
+                <p><strong>Client Name:</strong>${appointment.first_name} ${
+            appointment.last_name
+          }</p>
+                <p><strong>Client Phone Number</strong>${
+                  appointment.phone_number
+                }</p>
+                <p><strong>Service:</strong>${appointment.service_name}</p>
+                <p><strong>Client Comment:</strong>${appointment.comment}</p>
+                <p><strong>Service Description:</strong>${
+                  appointment.service_description
+                }</p>
+                <p><strong style="margin-right: 10px;">Service Price:</strong>£${
+                  appointment.service_price
+                }</p>
+              </div>
+            </div>
+          `;
+        });
+
+        accordion.innerHTML = htmlContent;
+        const accordionItems = document.querySelectorAll(".accordion-item");
+
+        accordionItems.forEach((item) => {
+          const title = item.querySelector(".accordion-title");
+
+          title.addEventListener("click", () => {
+            item.classList.toggle("active");
+          });
         });
       }
 
-      function editAppointment(appointmentId) {
-        const tableBody = document.querySelector("table tbody");
-        const rows = tableBody.getElementsByTagName("tr");
-
-        for (let i = 0; i < rows.length; i++) {
-          const row = rows[i];
-          const cellId = row.querySelector(".editable input.editField");
-
-          if (
-            cellId &&
-            Number(cellId.dataset.appointmentId) === appointmentId
-          ) {
-            // Enable the input field for the appointment date
-            cellId.removeAttribute("disabled");
-
-            const editIcon = row.querySelector(".edit-icon");
-            const deleteIcon = row.querySelector(".delete-icon");
-            const saveIcon = row.querySelector(".save-icon");
-
-            if (editIcon && deleteIcon && saveIcon) {
-              editIcon.style.display = "none";
-              deleteIcon.style.display = "none";
-              saveIcon.style.display = "inline-block";
-            }
-          } else if (cellId) {
-            // Disable other input fields to avoid conflicts
-            cellId.setAttribute("disabled", "disabled");
-          }
-        }
+      const modal = document.getElementById("myModal");
+      function editAppointment(appointment) {
+        modal.style.display = "block";
+        const formComponent = `
+        <span class="close" onclick="closeModal()">&times;</span>
+        <h3>Edit Appointment Details<h3>
+        <form id="editForm">
+          <label for="name">Appointment Date:</label>
+          <input type="datetime-local" value="${formatDateTimeForInput(
+            appointment.appointment_date
+          )}" id="name" name="name">
+          <label for="name">Client Comment:</label>
+          <input type="text" id="name" value="${appointment.comment}">
+          <label for="name">Name:</label>
+          <input type="text" id="name" name="name">
+          <label for="name">Name:</label>
+          <input type="text" id="name" name="name">
+          <label for="name">Name:</label>
+          <input type="text" id="name" name="name">
+        </form>`;
+        modal.innerHTML = formComponent;
+      }
+      function closeModal() {
+        modal.style.display = "none";
       }
 
       function formatDateTimeForInput(dateTimeString) {
@@ -187,6 +170,7 @@
 
         for (let i = 0; i < rows.length; i++) {
           const row = rows[i];
+          console.log({ row });
           const cellId = row.querySelector(".editable input.editField");
 
           if (cellId) {
