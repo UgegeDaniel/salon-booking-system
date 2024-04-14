@@ -61,7 +61,6 @@ router.get(
     try {
       const clientId = req.user.userId;
       const appointments = await getAllAppointmentsForClientService(clientId);
-      console.log({ appointments });
       res
         .status(200)
         .json({

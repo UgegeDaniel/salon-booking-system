@@ -40,7 +40,6 @@ function saveToLocalStorage(key, data) {
   try {
     const jsonData = JSON.stringify(data);
     localStorage.setItem(key, jsonData);
-    console.log(`Data saved to localStorage with key: ${key}`);
   } catch (error) {
     console.error("Error saving data to localStorage:", error);
   }

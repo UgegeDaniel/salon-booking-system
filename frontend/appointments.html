@@ -170,7 +170,6 @@
 
         for (let i = 0; i < rows.length; i++) {
           const row = rows[i];
-          console.log({ row });
           const cellId = row.querySelector(".editable input.editField");
 
           if (cellId) {
@@ -200,7 +199,6 @@
           { productId, appointment_date, comment },
           displayLoader
         );
-        console.log({ response, error, loading });
 
         //Show notification
         // const msgStyle = !response?.success || error ? "error" : "success";
