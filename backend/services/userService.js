@@ -22,7 +22,7 @@ export const createNewUserService = async (
 };
 
 export const getAllClientsService = async () => {
-  return await dbOperations.findBy("users", { role: "client" });
+  return await dbOperations.findBy("users", { role: "client" }, true);
 };
 
 export const getSingleUserByIdService = async (id) => {

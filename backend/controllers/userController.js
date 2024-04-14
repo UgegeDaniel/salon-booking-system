@@ -153,7 +153,7 @@ userController.get(
   async (req, res) => {
     try {
       const clients = await getAllClientsService();
-      res.status(200).json({ success: true, clients });
+      res.status(200).json({ success: true, clients, message: "All clients fetched successfully" });
     } catch (error) {
       console.error(error.message);
       res
@@ -225,6 +225,7 @@ userController.delete(
       }
       const deletedUser = await deleteSingleUserService(userId);
       res.status(200).json({
+        success: true,
         user: deletedUser,
         message: "User deleted successfully.",
       });

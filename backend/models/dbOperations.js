@@ -25,13 +25,13 @@ const dbOperations = {
     }
   },
 
-  findBy: async (tableName, columnObject) => {
+  findBy: async (tableName, columnObject, all) => {
     try {
       const column = Object.keys(columnObject)[0];
       const value = columnObject[column];
       const selectQuery = `SELECT * FROM ${tableName} WHERE ${column} = $1`;
       const result = await pool.query(selectQuery, [value]);
-      return result.rows[0];
+      return all ? result.rows : result.rows[0];
     } catch (error) {
       throw new Error(`Error finding row by column: ${error.message}`);
     }
