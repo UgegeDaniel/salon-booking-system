@@ -409,6 +409,15 @@ li {
   /* Make the price and gender bold */
 }
 
+.service-name{
+  color: #f9f9f9;
+  font-size: medium;
+}
+
+.service-description{
+  text-align: center;
+}
+
 /* ... (your existing styles) */
 
 /* Responsive Styles */

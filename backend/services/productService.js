@@ -4,7 +4,8 @@ export const createNewProductService = async (
   name,
   description,
   price,
-  intended_gender
+  intended_gender,
+  adminId
 ) => {
   const newProduct = await dbOperations.insert("products", {
     name,
@@ -12,6 +13,7 @@ export const createNewProductService = async (
     price,
     intended_gender,
     type: "service",
+    admin_id: adminId,
   });
   return newProduct;
 };

@@ -32,7 +32,7 @@
           <i class="fa fa-bars"></i>
         </a>
       </div>
-      <div id="manageResourcesDropdown" lass="dropdown">
+      <div id="manageResourcesDropdown" class="dropdown">
         <button class="dropbtn">Manage Resources</button>
         <div class="dropdown-content">
           <a href="crudService.html">Manage Services</a>
@@ -85,6 +85,7 @@
           );
 
           const serviceName = document.createElement("h2");
+          serviceName.classList.add("service-name");
           serviceName.textContent = service.name;
 
           const serviceDescription = document.createElement("p");
@@ -93,7 +94,7 @@
 
           const servicePriceGender = document.createElement("p");
           servicePriceGender.classList.add("price-gender");
-          servicePriceGender.textContent = `$${service.price} - ${service.intended_gender}`;
+          servicePriceGender.textContent = `£${service.price} - ${service.intended_gender}`;
 
           const bookAppointmentText = document.createElement("p");
           bookAppointmentText.classList.add("book-appointment-text");

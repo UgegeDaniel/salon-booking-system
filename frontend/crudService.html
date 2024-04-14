@@ -44,6 +44,10 @@
   <body>
     <div class="container">
       <h1>Salon Booking System</h1>
+      <div class="loading-overlay" id="loadingOverlay" style="display: none">
+        <div class="loader"></div>
+        <!-- <div class="loading-text">Loading...</div> -->
+      </div>
       <div class="flex">
         <div class="topnav" id="myTopnav">
           <a href="index.html">Home</a>
@@ -55,7 +59,7 @@
           <i class="fa fa-bars"></i>
         </a>
       </div>
-      <div id="manageResourcesDropdown" lass="dropdown">
+      <div id="manageResourcesDropdown" class="dropdown">
         <button class="dropbtn">Manage Resources</button>
         <div class="dropdown-content">
           <a href="crudService.html">Manage Services</a>
@@ -124,26 +128,29 @@
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <p>Fetching Services ...</p>
-          </tr>
         </tbody>
       </table>
     </div>
     <div class="notification" id="notification"></div>
     <script src="./js/app.js"></script>
+    <script src="./js/utils.js"></script>
     <script src="./js/api.js"></script>
     <script src="./js/crudService-ui.js"></script>
     <script>
       document.addEventListener("DOMContentLoaded", async function () {
         try {
-          const services = await RequestManager.fetchData(
-            "http://localhost:5000/product/products"
+          const { response, error, loading} =  await fetchResources(
+            "product/products",
+            displayLoader
           );
-          populateTable(services.products);
-          localStorage.setItem("services", JSON.stringify(services.products));
+        //Show notification
+        const msgStyle = !response?.success || error ? "error" : "success";
+        const msg = error || response.message;
+        displayNotification(msg, msgStyle);
+          populateTable(response.products);
+          localStorage.setItem("services", JSON.stringify(response.products));
         } catch (error) {
-          console.error("Failed to fetch services:", error.message);
+          console.error("Failed to fetch services:", error);
         }
       });
       async function addService(event) {
@@ -161,24 +168,17 @@
           intendedGender: intendedGender,
         };
 
-        const response = await RequestManager.postData(
-          "http://localhost:5000/product/create-product",
-          serviceData
+        const {response, loading, error} = await postRequest(
+          "product/create-product",
+          serviceData,
+          displayLoader
         );
 
-        // Show notification based on the API response
-        showNotification(
-          response.success
-            ? "Success: " + response.message
-            : "Error: " + response.message,
-          response.success
-        );
-
-        // Refresh the table after adding a new service
-        const services = await RequestManager.fetchData(
-          "http://localhost:5000/product/products"
-        );
-        populateTable(services.products);
+         //Show notification
+         const msgStyle = !response?.success || error ? "error" : "success";
+        const msg = error || response.message;
+        displayNotification(msg, msgStyle);
+        window.location.href = "crudService.html"
       }
 
       async function populateTable(services) {
@@ -191,17 +191,17 @@
           const row = tableBody.insertRow();
           row.innerHTML = `
             <td class="editable">
-                <input type="text" disabled value="${service.name}" data-service-id="${service.id}" />
+                <input type="text" name="name" disabled value="${service.name}" data-service-id="${service.id}" />
             </td>
             <td class="editable">
-                <input type="text" disabled value="${service.description}" data-service-id="${service.id}" />
+                <input type="text" name="description" disabled value="${service.description}" data-service-id="${service.id}" />
             </td>
             <td class="editable">
-                <input type="text" disabled value="${service.price}" data-service-id="${service.id}" />
+                <input type="text" name="price" disabled value="${service.price}" data-service-id="${service.id}" />
             </td>
             <td class="editable" data-service-id="${service.id}">
                 <div class="input_box">
-                    <select id="intendedGender" required disabled>
+                    <select id="intendedGender" required disabled name="intendedGender">
                         <option value="${service.intended_gender}" disabled selected>${service.intended_gender}</option>
                         <option value="male">Male</option>
                         <option value="female">Female</option>
@@ -271,23 +271,34 @@
         const rows = tableBody.getElementsByTagName("tr");
 
         for (let i = 0; i < rows.length; i++) {
-          const row = rows[i];
-          const cellId = row.querySelector(".editable input, .editable select")
-            .dataset.serviceId;
+            const row = rows[i];
+            const updatedProduct = {};
+            const cellId = row.querySelector(".editable input, .editable select").dataset.serviceId;
 
-          if (Number(cellId) === serviceId) {
-            row
-              .querySelectorAll(".editable input, .editable select")
-              .forEach((input) => {
-                input.setAttribute("disabled", true);
-              });
+            if (Number(cellId) === serviceId) {
+              const editingFields = row.querySelectorAll(".editable input, .editable select")
+                editingFields.forEach((input) => {
+                    input.setAttribute("disabled", true);
+                    updatedProduct[input.name] = input.value;
+                });
 
-            row.querySelector(".edit-icon").style.display = "inline-block";
-            row.querySelector(".delete-icon").style.display = "inline-block";
-            row.querySelector(".save-icon").style.display = "none";
-          }
+                row.querySelector(".edit-icon").style.display = "inline-block";
+                row.querySelector(".delete-icon").style.display = "inline-block";
+                row.querySelector(".save-icon").style.display = "none";
+                
+                const {response, loading, error } = await updateRequest(
+                  `product/update-product/${serviceId}`,
+                  updatedProduct,
+                  displayLoader
+                )
+                //Show notification
+                const msgStyle = !response?.success || error ? "error" : "success";
+                const msg = error || response.message;
+                displayNotification(msg, msgStyle);
+                console.log({ response, loading, error })
+            }
         }
-      }
+    }
 
       async function deleteService(serviceId) {
         const confirmDelete = confirm(
@@ -295,21 +306,15 @@
         );
         if (confirmDelete) {
           // Make API request to delete the service
-          const response = await RequestManager.deleteData(
-            `http://localhost:5000/product/delete-product/${serviceId}`
-          );
-          showNotification(
-            response.success
-              ? "Success: " + response.message
-              : "Error: " + response.message,
-            response.success
-          );
-
-          // Refresh the table after deletion
-          const services = await RequestManager.fetchData(
-            "http://localhost:5000/product/products"
-          );
-          populateTable(services.products);
+          const {response, loading, error } = await deleteRequest(
+                  `product/delete-product/${serviceId}`,
+                  displayLoader
+                )
+                //Show notification
+                const msgStyle = !response?.success || error ? "error" : "success";
+                const msg = error || response.message;
+                displayNotification(msg, msgStyle);
+                setTimeout(window.location.href = "crudService.html", 2000);
         }
       }
     </script>

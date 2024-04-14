@@ -23,18 +23,20 @@ router.post(
   async (req, res) => {
     try {
       const { name, description, price, intendedGender } = req.body;
+      const adminId = req.user.userId;
       // Validate input
       if (!name || !description || !price || !intendedGender) {
         return res.status(400).json({
           success: false,
-          message: "Please provide all the details about the product.",
+          message: "Please provide all the required details about the product.",
         });
       }
-      const newProduct = createNewProductService(
+      const newProduct = await createNewProductService(
         name,
         description,
         price,
-        intendedGender
+        intendedGender,
+        adminId
       );
       return res.status(201).json({
         success: true,
