@@ -5,12 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link
       rel="stylesheet"
-      href="https://unicons.iconscout.com/release/v4.0.0/css/line.css"
-    />
+      href="https://unicons.iconscout.com/release/v4.0.0/css/line.css" />
     <link
       rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
-    />
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
     <link rel="stylesheet" href="./css/styles.css" />
     <title>Salon Booking System | Appointments</title>
   </head>
@@ -64,6 +62,9 @@
         displayNotification(msg, msgStyle);
         populateTable(response.appointments);
       });
+
+      let editing = false;
+      let editingId = null;
       async function populateTable(appointments) {
         const accordion = document.querySelector(".accordion");
         appointments.sort(
@@ -80,7 +81,7 @@
                 <input disabled type="datetime-local" class="editField" value="${formatDateTimeForInput(
                   appointment.appointment_date
                 )}"/>
-                <span class="edit-icon" onclick="editAppointment(${appointment})" data-appointment-id="${appointment}">✏️</span>
+                <span class="edit-icon" onclick="editAppointment(${appointment.appointment_id}, ${appointment.service_id})" data-appointment-id="${appointment.appointment_id}">✏️</span>
                 <span class="delete-icon" onclick="deleteAppointment(${
                   appointment.appointment_id
                 })">🗑️</span>
@@ -101,8 +102,23 @@
                   appointment.service_price
                 }</p>
               </div>
-            </div>
-          `;
+              </div> <div style="display: none" id="editForm-${appointment.appointment_id}">
+                ${editFormDisplay(appointment)}
+                </div>`;
+            function editFormDisplay (appointment) {
+              return `
+              <form style="margin-bottom: 20px">
+                <h3 style="font-size: 16px; color: #3498db">Edit Appointment Details</h3>
+                <label style="font-size: 16px" for="name">Appointment Date:</label>
+                <input style="font-size: 12px" id="appointmentDate" type="datetime-local" value="${formatDateTimeForInput(
+                  appointment.appointment_date
+                )}" id="name" name="name">
+                <label style="font-size: 16px" for="name">Client Comment:</label>
+                <input style="font-size: 12px" type="text" id="comment" value="${appointment.comment}">
+                <button style="padding: 8px; display: block; text-align: center; max-width: 5rem; margin: 12px" type="submit">Submit</button>
+              </form>
+               `
+            }
         });
 
         accordion.innerHTML = htmlContent;
@@ -117,30 +133,43 @@
         });
       }
 
-      const modal = document.getElementById("myModal");
-      function editAppointment(appointment) {
-        modal.style.display = "block";
-        const formComponent = `
-        <span class="close" onclick="closeModal()">&times;</span>
-        <h3>Edit Appointment Details<h3>
-        <form id="editForm">
-          <label for="name">Appointment Date:</label>
-          <input type="datetime-local" value="${formatDateTimeForInput(
-            appointment.appointment_date
-          )}" id="name" name="name">
-          <label for="name">Client Comment:</label>
-          <input type="text" id="name" value="${appointment.comment}">
-          <label for="name">Name:</label>
-          <input type="text" id="name" name="name">
-          <label for="name">Name:</label>
-          <input type="text" id="name" name="name">
-          <label for="name">Name:</label>
-          <input type="text" id="name" name="name">
-        </form>`;
-        modal.innerHTML = formComponent;
+      function editAppointment(appointmentId, serviceId) {
+        console.log(appointmentId, serviceId)
+        const editForm = document.querySelector(`#editForm-${appointmentId}`);
+        if(editForm.style.display === "block"){
+          editForm.style.display = "none"
+        }else{
+          editForm.style.display = "block"
+        }
+        document
+        .querySelector(`#editForm-${appointmentId}`)
+        .addEventListener("submit", function (event) {
+          event.preventDefault();
+          submitAppointmentForm(appointmentId, serviceId);
+        });
       }
-      function closeModal() {
-        modal.style.display = "none";
+      async function submitAppointmentForm(appointmentId, serviceId) {
+        const appointmentDate = new Date(
+          document.getElementById("appointmentDate").value
+        ).toISOString();
+        const comment = document.getElementById("comment").value;
+        // Make a POST request to create an appointment
+        const appointmentData = {
+          appointmentDate,
+          productId: serviceId,
+          comment,
+        };
+
+        const { response, error, loading } = await updateRequest(
+          `appointment/update-appointment/${appointmentId}`,
+          appointmentData,
+          displayLoader
+        );
+        //Show notification
+        const msgStyle = !response?.success || error ? "error" : "success";
+        const msg = error || response.message;
+        displayNotification(msg, msgStyle);
+        setTimeout(window.location.href = "appointments.html", 5000);
       }
 
       function formatDateTimeForInput(dateTimeString) {
@@ -194,6 +223,8 @@
             }
           }
         }
+
+        console.log({ productId, appointment_date, comment })
         const { response, error, loading } = await updateRequest(
           `/appointment/update-appointment/:${appointmentId}`,
           { productId, appointment_date, comment },

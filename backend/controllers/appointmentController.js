@@ -127,6 +127,9 @@ router.put(
     try {
       const { appointmentId } = req.params;
       const { productId, appointmentDate, comment } = req.body;
+      console.log({
+        appointmentId, productId, appointmentDate, comment
+      })
       const clientId = req.user.userId;
       if (!productId || !appointmentDate) {
         return res.status(400).json({
